@@ -1,7 +1,4 @@
 package ca.mcmaster.se2aa4.mazerunner;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.commons.cli.*;
@@ -9,7 +6,6 @@ import org.apache.commons.cli.*;
 public class Main {
 
     private static final Logger logger = LogManager.getLogger();
-
     public static void main(String[] args) throws ParseException {
 
         Options options = new Options();
@@ -25,9 +21,13 @@ public class Main {
         maze.setMaze(mazeTextFile);
         maze.convertMazeTextFile();
         maze.printMaze();
-        
-        logger.info("**** Computing path");
-        logger.info("PATH NOT COMPUTED");
+
+        PathFinder path = new PathFinder();
+        path.setMaze(maze);
+        path.findStartPosition();
+        path.findEndPosition();
+        path.forward();
+        logger.info("Path computed " + path.getDirections());
         logger.info("** End of MazeRunner");
     }
 }
