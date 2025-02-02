@@ -24,10 +24,10 @@ public class Main {
 
         PathFinder path = new PathFinder();
         path.setMaze(maze);
-        path.findStartPosition();
-        path.findEndPosition();
-        path.forward();
-        logger.info("Path computed " + path.getDirections());
+        path.findStartandEndPosition();
+        path.findPath();
+        path.getFinalPath();
+        // logger.info("Path computed " + path.getMovements());
         logger.info("** End of MazeRunner");
     }
 }
