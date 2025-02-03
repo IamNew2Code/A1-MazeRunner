@@ -1,8 +1,6 @@
 package ca.mcmaster.se2aa4.mazerunner;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Queue;
 import java.util.Stack;
 
 public class PathFinder {
@@ -10,14 +8,13 @@ public class PathFinder {
     private Position mazeExit;
     private Maze maze;
     private List<String> finalPath = new ArrayList<>();
-    private StringBuilder currPath = new StringBuilder();
-    private String direction = "DLRU";
     
     //visitedPositions is an array list that keeps track of which tiles we have been visited to avoid looping or revisiting dead ends
     private List<Position> visitedPositions = new ArrayList<>();
 
     //keeps track of the tiles we are passing in the Maze (2d array) 
     Stack<Position> pathStack = new Stack<>();
+    Stack<CardinalDirection> directionStack = new Stack<>();
 
     private int[] dr = { 1, 0, 0, -1 };
     private int[] dc = { 0, -1, 1, 0 };
@@ -39,9 +36,12 @@ public class PathFinder {
 
         //current position will be set to the start position
         Position currentPos = this.mazeStart;
+        CardinalDirection currentDir = CardinalDirection.EAST;
 
         this.visitedPositions.add(currentPos);
         this.pathStack.push(currentPos);
+        this.directionStack.push(currentDir);
+
 
         while (!currentPos.positionEqual(this.mazeExit)) {
             
@@ -55,9 +55,21 @@ public class PathFinder {
 
                 //check if the desired tile we want to visit is valid
                 if (isValid(newRow, newCol)) {
-                    currentPos = new Position(newRow, newCol);
+                    
+                    Position newPos = new Position(newRow, newCol);
+                    Movement move = new Movement(currentDir, currentPos, newPos);
+                    move.determineNewDirection();
+
+                    currentDir = move.getDirection();
+
+                    currentPos = newPos;
+                    
+                    //currentPos = new Position(newRow, newCol);
+
                     this.visitedPositions.add(currentPos);
                     this.pathStack.push(currentPos); 
+                    this.directionStack.push(currentDir);
+                    this.finalPath.add(move.getMovement());
                     moved = true;
                     break;
                 }
@@ -69,9 +81,12 @@ public class PathFinder {
 
                     //by poping the position of the tile we can simulate going backwards
                     this.pathStack.pop();
+                    this.directionStack.pop();
+                    this.finalPath.remove(this.finalPath.size()-1);
 
                     //set the currentPos to the tile before we reach the dead end
                     currentPos = this.pathStack.peek();
+                    currentDir = this.directionStack.peek();
                 }
             }
         }
@@ -97,49 +112,20 @@ public class PathFinder {
 
         return this.maze.getTile(tempNewPosition).validPath() && !visited;
     }
+
+    public String getFinalPath(){
+
+        //used to convert the finalPath array list into a String 
+        //used an array in the first place to simulate the backtracking capability in the path algorithm
+        StringBuilder temp = new StringBuilder();
+
+        for(String i: this.finalPath){
+            temp.append(i);
+        }
         
+        String calculatedPath = temp.toString();
 
-    /* 
-        in the future need to implement going forward based on the direction
-
-            Point east:
-                L goes to north
-                R goes to south
-                F (+1 to column value)
-            
-            Point South:
-                L goes to east
-                R goes to west
-                F (+1 to row value)
-
-            Point west:
-                L goes to south
-                R goes to north
-                F (-1 to column value)
-
-            Point North:
-                L goes to west
-                R goes to east
-                F (-1 to row value)
-    */
-
-    public List<String> getFinalPath(){
-        Stack<Position> tempStack = new Stack<>();
-        Position tempPos = new Position(0, 0);
-        while(!pathStack.empty()){
-            tempStack.add(pathStack.pop());
-        }
-
-        while (!tempStack.empty()) {
-            tempPos = tempStack.pop();
-            finalPath.add(tempPos.getRow() + "," + tempPos.getCol());
-        }
-
-        System.out.println("RESULT:");
-        for(String i: finalPath){
-            System.out.print(i + " ");
-        }
-        return finalPath;
+        return calculatedPath;
     }
 
 

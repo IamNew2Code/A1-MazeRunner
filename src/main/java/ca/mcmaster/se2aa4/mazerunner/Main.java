@@ -11,23 +11,34 @@ public class Main {
         Options options = new Options();
         options.addOption("i", true, "maze text file");
 
-        CommandLineParser parser = new DefaultParser();
-        CommandLine cmd = parser.parse(options,args);
-        String mazeTextFile = cmd.getOptionValue("i");
+        //spacing out the path results in some issues
+        //i.e 4F R 3F will only register 4F, so need to type it in as 4FR3F
+        options.addOption("p", true, "maze path");
 
-        logger.info("** Starting Maze Runner");
+        CommandLineParser parser = new DefaultParser();
+        CommandLine cmd = parser.parse(options, args);
+        String mazeTextFile = cmd.getOptionValue("i");
+        String mazeVerifier = cmd.getOptionValue("p");
 
         Maze maze = new Maze();
         maze.setMaze(mazeTextFile);
         maze.convertMazeTextFile();
-        maze.printMaze();
 
         PathFinder path = new PathFinder();
         path.setMaze(maze);
         path.findStartandEndPosition();
         path.findPath();
-        path.getFinalPath();
-        // logger.info("Path computed " + path.getMovements());
-        logger.info("** End of MazeRunner");
+        String calculatedPath = path.getFinalPath();
+
+        if(mazeVerifier == null){
+            System.out.println(calculatedPath);
+        } else{
+            PathChecker pathChecker = new PathChecker(mazeVerifier, calculatedPath);
+            pathChecker.checkCanOrFact();
+
+            pathChecker.formatInput();
+            System.out.println(pathChecker.checkPath());
+        }
+
     }
 }
