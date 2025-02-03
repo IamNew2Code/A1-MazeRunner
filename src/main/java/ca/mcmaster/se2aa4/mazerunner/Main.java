@@ -31,7 +31,8 @@ public class Main {
         String calculatedPath = path.getFinalPath();
 
         if(mazeVerifier == null){
-            System.out.println(calculatedPath);
+            Factorize factoredForm = new Factorize();
+            System.out.println(factoredForm.factorizePath(calculatedPath));
         } else{
             PathChecker pathChecker = new PathChecker(mazeVerifier, calculatedPath);
             pathChecker.checkCanOrFact();
