@@ -38,7 +38,6 @@ public class Main {
             pathChecker.checkCanOrFact();
 
             pathChecker.formatInput();
-            System.out.println(pathChecker.checkPath());
         }
 
     }

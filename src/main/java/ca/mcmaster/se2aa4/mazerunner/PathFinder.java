@@ -42,7 +42,6 @@ public class PathFinder {
         this.pathStack.push(currentPos);
         this.directionStack.push(currentDir);
 
-
         while (!currentPos.positionEqual(this.mazeExit)) {
             
             //keeps track if we have advanced to a new tile

@@ -14,6 +14,7 @@ public class Factorize {
                     factorizedPath.append(count).append('F');
                     count = 0;
                 }
+                factorizedPath.append(c);
             }
         }
 
