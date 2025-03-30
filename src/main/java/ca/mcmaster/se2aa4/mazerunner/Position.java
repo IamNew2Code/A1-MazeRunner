@@ -1,5 +1,7 @@
 package ca.mcmaster.se2aa4.mazerunner;
 
+import java.util.Objects;
+
 public class Position {
     int row;
     int col;
@@ -16,11 +18,20 @@ public class Position {
         return this.col;
     }
 
-    public boolean positionEqual(Position compared){
-        if (this.row == compared.getRow() && this.col == compared.getCol()) {
+    @Override
+    public boolean equals(Object position){
+        if (this == position){
             return true;
-        } else {
+        }
+        if  (position == null || this.getClass() != position.getClass()){
             return false;
         }
+        Position comparingPosition = (Position) position;
+        return this.row == comparingPosition.getRow() && this.col == comparingPosition.getCol();
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(this.row, this.col);
     }
 }

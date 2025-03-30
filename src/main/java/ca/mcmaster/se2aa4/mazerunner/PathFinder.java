@@ -27,8 +27,8 @@ public class PathFinder {
 
     public void findStartandEndPosition(){
 
-        this.mazeStart = this.maze.getStartTile().position;
-        this.mazeExit = this.maze.getEndTile().position;
+        this.mazeStart = this.maze.getStartTile().getPosition();
+        this.mazeExit = this.maze.getEndTile().getPosition();
     }
 
     //reference: https://medium.com/@amrmohamed81298/maze-solver-visualizer-a-journey-through-dfs-bfs-and-a-algorithms-in-practice-02d719b0bce6
@@ -42,7 +42,7 @@ public class PathFinder {
         this.pathStack.push(currentPos);
         this.directionStack.push(currentDir);
 
-        while (!currentPos.positionEqual(this.mazeExit)) {
+        while (!currentPos.equals(this.mazeExit)) {
             
             //keeps track if we have advanced to a new tile
             boolean moved = false;
@@ -103,7 +103,7 @@ public class PathFinder {
         //checks if the new position we want to go to is equal to any of the positions we have visited already
         //if it is true we dont want to go to it because we might loop, so if it is false we want to go to it
         for (Position i: this.visitedPositions){
-            if (tempNewPosition.positionEqual(i)){
+            if (tempNewPosition.equals(i)){
                 visited = true;
                 break;
             }

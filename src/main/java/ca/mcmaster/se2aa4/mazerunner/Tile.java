@@ -1,27 +1,39 @@
 package ca.mcmaster.se2aa4.mazerunner;
+import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.HashMap;
 
 public class Tile {
-    Position position;
-    Type type;
+    private final Position position;
+    private final Type type;
+    private static final Map<Position, Tile> TILES = new HashMap<>();
+    private static final Logger logger = LogManager.getLogger();
 
-    public Tile(Position position, Type type){
+    private Tile(Position position, Type type){
         this.position = position;
         this.type = type;
+    }
+
+    public static Tile createTile(Position p, Type t){
+        if(TILES.get(p) == null){
+            logger.info("WAS TRIGGERED");
+            TILES.put(p,new Tile(p, t));
+        }
+        return TILES.get(p);
     }
 
     public Position getPosition(){
         return this.position;
     }
 
-    public void changeType(Type type){
-        this.type = type;
+    public Type getType(){
+        return this.type;
     }
 
     public boolean validPath(){
-        if(this.type == Type.PASS){
-            return true;
-        } else{
-            return false;
-        }
+        return this.type == Type.PASS;
     }
 }

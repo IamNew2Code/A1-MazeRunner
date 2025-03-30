@@ -20,8 +20,7 @@ public class Main {
         String mazeTextFile = cmd.getOptionValue("i");
         String mazeVerifier = cmd.getOptionValue("p");
 
-        Maze maze = new Maze();
-        maze.setMaze(mazeTextFile);
+        Maze maze = new Maze(mazeTextFile);
         maze.convertMazeTextFile();
 
         PathFinder path = new PathFinder();
