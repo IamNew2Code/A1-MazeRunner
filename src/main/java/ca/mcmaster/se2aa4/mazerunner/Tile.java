@@ -28,6 +28,6 @@ public class Tile {
     }
 
     public boolean validPath(){
-        return this.type == Type.PASS;
+        return this.type.equals(Type.PASS);
     }
 }

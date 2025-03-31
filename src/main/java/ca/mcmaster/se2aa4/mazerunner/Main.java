@@ -35,8 +35,8 @@ public class Main {
         } else{
             PathChecker pathChecker = new PathChecker(mazeVerifier, calculatedPath);
             pathChecker.checkCanOrFact();
-
             pathChecker.formatInput();
+            System.out.println(pathChecker.checkPath());
         }
 
     }

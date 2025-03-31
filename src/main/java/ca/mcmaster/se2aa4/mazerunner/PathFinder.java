@@ -1,7 +1,6 @@
 package ca.mcmaster.se2aa4.mazerunner;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 public class PathFinder {
     private Position mazeStart;
@@ -11,14 +10,6 @@ public class PathFinder {
     
     //visitedPositions is an array list that keeps track of which tiles we have been visited to avoid looping or revisiting dead ends
     private List<Position> visitedPositions = new ArrayList<>();
-
-    //keeps track of the tiles we are passing in the Maze (2d array) 
-    Stack<Position> pathStack = new Stack<>();
-    Stack<CardinalDirection> directionStack = new Stack<>();
-
-    private int[] dr = { 1, 0, 0, -1 };
-    private int[] dc = { 0, -1, 1, 0 };
-    
 
     public void setMaze(Maze maze){
         this.maze = maze;
@@ -39,36 +30,33 @@ public class PathFinder {
         CardinalDirection currentDir = CardinalDirection.EAST;
 
         this.visitedPositions.add(currentPos);
-        this.pathStack.push(currentPos);
-        this.directionStack.push(currentDir);
+
+        CommandHistory history = new CommandHistory();
 
         while (!currentPos.equals(this.mazeExit)) {
             
+            List<Command> commands = new ArrayList<Command>();
+            commands.add(new LeftTurnCommand(currentPos,currentDir));
+            commands.add(new RightTurnCommand(currentPos, currentDir));
+            commands.add(new ForwardCommand(currentPos, currentDir));
+
             //keeps track if we have advanced to a new tile
             boolean moved = false;
 
             //since there are 4 tiles we can go to, try all 4 of them
-            for (int i = 0; i < 4; i++) {
-                int newRow = currentPos.getRow() + this.dr[i];
-                int newCol = currentPos.getCol() + this.dc[i];
-
+            for (Command c: commands){
+                c.execute();
+                Position newPos = c.getPosition();
                 //check if the desired tile we want to visit is valid
-                if (isValid(newRow, newCol)) {
+                if (isValid(newPos)) {
+
+                    history.push(c);
                     
-                    Position newPos = new Position(newRow, newCol);
-                    Movement move = new Movement(currentDir, currentPos, newPos);
-                    move.determineNewDirection();
-
-                    currentDir = move.getDirection();
-
+                    currentDir = c.getDirection();
                     currentPos = newPos;
-                    
-                    //currentPos = new Position(newRow, newCol);
 
                     this.visitedPositions.add(currentPos);
-                    this.pathStack.push(currentPos); 
-                    this.directionStack.push(currentDir);
-                    this.finalPath.add(move.getMovement());
+                    this.finalPath.add(c.getCommandString());
                     moved = true;
                     break;
                 }
@@ -76,40 +64,35 @@ public class PathFinder {
             
             // If there are no tiles that we are able to visit then we need to back track
             if (!moved) {
-                if (!this.pathStack.isEmpty()) {
-
-                    //by poping the position of the tile we can simulate going backwards
-                    this.pathStack.pop();
-                    this.directionStack.pop();
+                if(!history.isEmpty()){
+                    history.pop();
+                    Command previousCommand = history.peek();
+                    currentPos = previousCommand.getPosition();
+                    currentDir = previousCommand.getDirection();
                     this.finalPath.remove(this.finalPath.size()-1);
-
-                    //set the currentPos to the tile before we reach the dead end
-                    currentPos = this.pathStack.peek();
-                    currentDir = this.directionStack.peek();
                 }
             }
         }
 
     }
     
-    public boolean isValid(int row, int col){
+    public boolean isValid(Position newPosition){
         boolean visited = false;
-        Position tempNewPosition = new Position(row, col);
 
         //if the row or col of the new position we are trying to go to is not within the bounds of the maze don't go to it
-        if (row < 0 || row >= this.maze.getTotalRow()) return false;
-        if (col <0 || col >= this.maze.getTotalCol()) return false;
+        if (newPosition.getRow() < 0 || newPosition.getRow() >= this.maze.getTotalRow()) return false;
+        if (newPosition.getCol() <0 || newPosition.getCol() >= this.maze.getTotalCol()) return false;
 
         //checks if the new position we want to go to is equal to any of the positions we have visited already
         //if it is true we dont want to go to it because we might loop, so if it is false we want to go to it
         for (Position i: this.visitedPositions){
-            if (tempNewPosition.equals(i)){
+            if (newPosition.equals(i)){
                 visited = true;
                 break;
             }
         }
 
-        return this.maze.getTile(tempNewPosition).validPath() && !visited;
+        return this.maze.getTile(newPosition).validPath() && !visited;
     }
 
     public String getFinalPath(){
