@@ -25,6 +25,8 @@ public class PathFinder {
     //reference: https://medium.com/@amrmohamed81298/maze-solver-visualizer-a-journey-through-dfs-bfs-and-a-algorithms-in-practice-02d719b0bce6
     public void findPath(){
 
+        findStartandEndPosition();
+
         //current position will be set to the start position
         Position currentPos = this.mazeStart;
         CardinalDirection currentDir = CardinalDirection.EAST;
@@ -70,6 +72,9 @@ public class PathFinder {
                     currentPos = previousCommand.getPosition();
                     currentDir = previousCommand.getDirection();
                     this.finalPath.remove(this.finalPath.size()-1);
+                } else{
+                    //if the runner has to back track but there are no possible positions to back track to the maze is impossible to solve
+                    return;
                 }
             }
         }
@@ -100,6 +105,10 @@ public class PathFinder {
         //used to convert the finalPath array list into a String 
         //used an array in the first place to simulate the backtracking capability in the path algorithm
         StringBuilder temp = new StringBuilder();
+
+        if (this.finalPath.isEmpty()) {
+            return "No path found";
+        }
 
         for(String i: this.finalPath){
             temp.append(i);

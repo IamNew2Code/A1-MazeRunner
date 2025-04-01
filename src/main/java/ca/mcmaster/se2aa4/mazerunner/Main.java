@@ -25,11 +25,12 @@ public class Main {
 
         PathFinder path = new PathFinder();
         path.setMaze(maze);
-        path.findStartandEndPosition();
         path.findPath();
         String calculatedPath = path.getFinalPath();
 
-        if(mazeVerifier == null){
+        if(calculatedPath.equals("No path found")){
+            System.out.println(calculatedPath);
+        } else if(mazeVerifier == null){
             Factorize factoredForm = new Factorize();
             System.out.println(factoredForm.factorizePath(calculatedPath));
         } else{

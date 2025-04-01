@@ -43,7 +43,7 @@ public class PathChecker {
             }
             this.inputPath = reformatedInput.toString();
 
-        } else if (this.isFactorized == false){
+        } else {
             this.inputPath = this.inputPath.replaceAll("\\s+", "");
         }
     }
